@@ -10,9 +10,9 @@ if [[ $# -lt 3 ]]; then
   exit 1
 fi
 
-START_PORT=$1
-END_PORT=$2
-HOST=$3
+HOST=$1
+START_PORT=$2
+END_PORT=$3
 
 if ! [[ $START_PORT =~ ^[0-9]+$ ]] || ! [[ $END_PORT =~ ^[0-9]+$ ]]; then
   echo "Ports must be integers."
@@ -26,7 +26,7 @@ fi
 
 echo "Port scanning $HOST from port $START_PORT to $END_PORT..."
 for ((port=START_PORT; port<=END_PORT; port++)); do
-  if timeout 1 bash -c ">/dev/tcp/${TARGET}/${port}" 2>/dev/null; then
+  if timeout 1 bash -c ">/dev/tcp/${HOST}/${port}" 2>/dev/null; then
     echo "Port $port: OPEN"
   fi
 done

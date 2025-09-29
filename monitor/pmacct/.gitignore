@@ -1,0 +1,2 @@
+data/*.json
+clean_outdated_data.sh

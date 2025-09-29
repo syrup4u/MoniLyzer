@@ -4,7 +4,8 @@ MoniLyzer: A Middleware Between Monitors and Attack Analyzer
 
 ## Environment
 
-Linux
+- Linux
+- Root Privilege (for monitors)
 
 ## Todo
 
