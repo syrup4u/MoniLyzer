@@ -8,4 +8,4 @@ find $TARGET_DIR -type f -mmin +2880 -delete # two days
 EOF
 chmod +x $SCRIPT_PATH
 
-( crontab -l 2>/dev/null; echo "0 3 * * * /usr/local/bin/clean_old_files.sh" ) | crontab -
+( crontab -l 2>/dev/null; echo "0 3 * * * $SCRIPT_PATH" ) | crontab -
