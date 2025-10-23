@@ -56,11 +56,11 @@ class monilyzerHandler(BaseHTTPRequestHandler):
         options = {}
         
         # Try path parsing first (e.g., /pmacct/16800)
-        if len(path_parts) >= 2 and path_parts[0] and path_parts[1]:
+        if len(path_parts) >= 2 and path_parts[0] != '' and path_parts[1] != '':
             try:
                 options["monitor"] = path_parts[0]
                 options["hours"] = int(path_parts[1])
-            except (ValueError, IndexError):
+            except ValueError:
                 self.send_error_response(400, "Invalid path format. Expected: /monitor/hours")
                 return
         # Try query string parsing (e.g., ?monitor=pmacct&hours=16800)
@@ -69,7 +69,7 @@ class monilyzerHandler(BaseHTTPRequestHandler):
                 try:
                     options["monitor"] = query_params["monitor"][0]
                     options["hours"] = int(query_params["hours"][0])
-                except (ValueError, IndexError):
+                except ValueError:
                     self.send_error_response(400, "Invalid query parameters")
                     return
             else:
