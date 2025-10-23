@@ -1,4 +1,6 @@
 from api.monitor import *
+from api.analyzer import AnalyzerManager
+from processor import Processor
 
 import configparser
 
@@ -10,15 +12,24 @@ CONFIG_PATH = "monilyzer.ini"
 3. Run the processor.
 """
 if __name__ == "__main__":
-    # TODO: load configurations
+    # load configurations
     config = configparser.ConfigParser()
     config.read(CONFIG_PATH)
 
     # initializes main modules
     monitor_manager = MonitorManager()
+    analyzer_manager = AnalyzerManager()
+    processor = Processor(monitor_manager, analyzer_manager, dict(config["server"]))
 
     # initializes and registers monitors
-    monitor_pmacct = MonitorPmacct()
+    pmacct_config = {
+        "data_dir": config["pmacct"]["data_dir"],
+        "ip": config["nic"]["ip"],
+    }
+    monitor_pmacct = MonitorPmacct(pmacct_config)
     monitor_manager.register_monitor("pmacct", monitor_pmacct)
 
     # TODO: initializes analyzers
+
+    # run processor
+    processor.run()

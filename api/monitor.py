@@ -16,12 +16,6 @@ class MonitorManager:
     def register_monitor(self, name, monitor):
         self.monitors[name] = monitor
 
-    """
-    Return Message object
-    """
-    def fetch_data(self, options: dict):
-        pass
-
 class MonitorPmacct:
     def __init__(self, config):
         self.data = []
@@ -30,8 +24,9 @@ class MonitorPmacct:
     def load_config(self, config):
         self.config = config
         self.driver = DriverPmacct(data_dir=self.config["data_dir"])
+        self.ip = self.config["ip"]
 
-    def preprocess(self, options: dict):
+    def preprocess(self, options: dict, data_filter: dict = {}):
         # parameters
         hours = options.get("hours", 1)
 
@@ -43,24 +38,26 @@ class MonitorPmacct:
             data = self.driver.read_data_from_file(fp)
             all_data.extend(data)
         
-        # filter and aggregate data
-        tcp_only = True # can be configured
+        # filter
+        tcp_only = "tcp_only" in data_filter
+        traffic_in_only = "traffic_in_only" in data_filter
         for record in all_data:
             if tcp_only and record.get("ip_proto") != "tcp":
                 continue
-            # TODO: aggregation
+            if traffic_in_only and record.get("ip_src") == self.ip:
+                continue
             self.data.append(record)
 
-    """
-    wrap the data in a Message object and return it
-    """
-    def process(self, options: dict):
-        pass
+def get_default_filter():
+    return {
+        "tcp_only": None,
+        "traffic_in_only": None,
+    }
 
 if __name__ == "__main__":
-    config = {"data_dir": "monitor/pmacct/data"}
+    config = {"data_dir": "monitor/pmacct/data", "ip": "10.10.1.1"}
     monitor = MonitorPmacct(config)
-    options = {"hours": 168}
-    monitor.preprocess(options)
+    options = {"hours": 16800}
+    monitor.preprocess(options, data_filter=get_default_filter())
     print(len(monitor.data))
     print(monitor.data[:2])
