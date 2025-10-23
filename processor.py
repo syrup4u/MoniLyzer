@@ -49,35 +49,29 @@ class monilyzerHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         # Parse URL path and query string
         parsed_url = urlparse(self.path)
-        path_parts = parsed_url.path.strip('/').split('/')
         query_params = parse_qs(parsed_url.query)
         
-        # Try to extract options from path or query string
-        options = {}
+        # Only accept /opt path
+        if parsed_url.path != '/opt':
+            self.send_error_response(400, "Invalid path. Expected: /opt")
+            return
         
-        # Try path parsing first (e.g., /pmacct/16800)
-        if len(path_parts) >= 2 and path_parts[0] != '' and path_parts[1] != '':
-            try:
-                options["monitor"] = path_parts[0]
-                options["hours"] = int(path_parts[1])
-            except ValueError:
-                self.send_error_response(400, "Invalid path format. Expected: /monitor/hours")
-                return
-        # Try query string parsing (e.g., ?monitor=pmacct&hours=16800)
-        elif query_params:
-            if "monitor" in query_params and "hours" in query_params:
-                try:
-                    options["monitor"] = query_params["monitor"][0]
-                    options["hours"] = int(query_params["hours"][0])
-                except ValueError:
-                    self.send_error_response(400, "Invalid query parameters")
-                    return
-            else:
-                self.send_error_response(400, "Missing required parameters: monitor and hours")
-                return
-        else:
-            # No valid options provided
-            self.send_error_response(400, "No options provided. Use path (/monitor/hours) or query string (?monitor=value&hours=value)")
+        # Extract options from query string (e.g., /opt?monitor=pmacct&hours=16800)
+        if not query_params:
+            self.send_error_response(400, "No query parameters provided. Expected: /opt?monitor=value&hours=value")
+            return
+        
+        if "monitor" not in query_params or "hours" not in query_params:
+            self.send_error_response(400, "Missing required parameters: monitor and hours")
+            return
+        
+        try:
+            options = {
+                "monitor": query_params["monitor"][0],
+                "hours": int(query_params["hours"][0])
+            }
+        except ValueError:
+            self.send_error_response(400, "Invalid query parameters. Hours must be a valid integer")
             return
         
         # Send response status code and headers
