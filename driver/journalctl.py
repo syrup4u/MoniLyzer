@@ -14,7 +14,7 @@ class DriverJournalctl:
 
         for s in self.listen_services:
             if s.endswith('.service'):
-                command.extend(['-u', s])
+                cmd.extend(['-u', s])
             else:
                 cmd.append(f"_COMM={s}")
         result = subprocess.Popen(cmd, stdout=subprocess.PIPE, text=True)

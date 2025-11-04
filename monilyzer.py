@@ -29,6 +29,12 @@ if __name__ == "__main__":
     monitor_pmacct = MonitorPmacct(pmacct_config)
     monitor_manager.register_monitor("pmacct", monitor_pmacct)
 
+    softflowd_config = {
+        "data_dir": config["softflowd"]["data_dir"],
+    }
+    monitor_softflowd = MonitorSoftflowd(softflowd_config)
+    monitor_manager.register_monitor("softflowd", monitor_softflowd)
+
     journalctl_config = {
         "services": config["journalctl"]["services"]
     }
