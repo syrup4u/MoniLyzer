@@ -29,6 +29,12 @@ if __name__ == "__main__":
     monitor_pmacct = MonitorPmacct(pmacct_config)
     monitor_manager.register_monitor("pmacct", monitor_pmacct)
 
+    journalctl_config = {
+        "services": config["journalctl"]["services"]
+    }
+    monitor_journalctl = MonitorJournalctl(journalctl_config)
+    monitor_manager.register_monitor("journalctl", monitor_journalctl)
+
     # TODO: initializes analyzers
 
     # run processor

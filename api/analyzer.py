@@ -1,5 +1,5 @@
-from transport.message import Message
+# from transport.message import Message
 
 class AnalyzerManager:
-    def analyze(self, data: Message):
+    def analyze(self, data):
         pass

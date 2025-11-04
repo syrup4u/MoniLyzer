@@ -3,6 +3,7 @@ Monitor module
 """
 
 from driver.pmacct import DriverPmacct
+from driver.journalctl import DriverJournalctl
 
 """
 - It is possible to implement concurrency by adding lock mechanism.
@@ -12,9 +13,12 @@ from driver.pmacct import DriverPmacct
 class MonitorManager:
     def __init__(self):
         self.monitors = {}
+        self.support = []
 
     def register_monitor(self, name, monitor):
         self.monitors[name] = monitor
+        self.support.append(name)
+
 
 class MonitorPmacct:
     def __init__(self, config):
@@ -26,13 +30,13 @@ class MonitorPmacct:
         self.driver = DriverPmacct(data_dir=self.config["data_dir"])
         self.ip = self.config["ip"]
 
-    def preprocess(self, options: dict, data_filter: dict = {}):
+    def preprocess(self, options: dict, data_filter: set = set()):
         # parameters
         hours = options.get("hours", 1)
 
         # fetch data from pmacct
-        range = self.driver.get_range_from_now(hours)
-        files = self.driver.get_files(range[0], range[1], range[2], range[3])
+        range_ = self.driver.get_range_from_now(hours)
+        files = self.driver.get_files(range_[0], range_[1], range_[2], range_[3])
         all_data = []
         for fp in files:
             data = self.driver.read_data_from_file(fp)
@@ -48,16 +52,58 @@ class MonitorPmacct:
                 continue
             self.data.append(record)
 
+
+class MonitorSoftflowd:
+    def __init__(self, config):
+        self.data = []
+        self.load_config(config)
+
+    def load_config(self, config):
+        pass
+
+    def preprocess(self, options: dict, data_filter: set = set()):
+        pass
+
+
+class MonitorJournalctl:
+    def __init__(self, config):
+        self.data = []
+        self.load_config(config)
+
+    def load_config(self, config):
+        services_str = config["services"]
+        services = services_str.split(",")
+        self.driver = DriverJournalctl(listen_services=services)
+
+    def preprocess(self, options: dict, data_filter: set = set()):
+        # parameters
+        hours = options.get("hours", 1)
+        data = self.driver.get_logs(hours)
+
+        # filter
+        for record in data:
+            f_items = {}
+            for field in data_filter:
+                f_items[field] = record[field]
+            self.data.append(f_items)
+
 def get_default_filter():
     return {
-        "tcp_only": None,
-        "traffic_in_only": None,
+        "pmacct": {
+            "tcp_only",
+            "traffic_in_only"
+        },
+        "journalctl": {
+            "MESSAGE",
+            "_SOURCE_REALTIME_TIMESTAMP",
+        }
     }
+
 
 if __name__ == "__main__":
     config = {"data_dir": "monitor/pmacct/data", "ip": "10.10.1.1"}
     monitor = MonitorPmacct(config)
     options = {"hours": 16800}
-    monitor.preprocess(options, data_filter=get_default_filter())
+    monitor.preprocess(options, data_filter=get_default_filter()['pmacct'])
     print(len(monitor.data))
     print(monitor.data[:2])

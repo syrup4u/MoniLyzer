@@ -1,10 +1,14 @@
-from transport.message import Message
+# from transport.message import Message
 from api.monitor import MonitorManager, get_default_filter
 from api.analyzer import AnalyzerManager
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 import json
+
+class Message:
+    def __init__(self, data):
+        self.payload = data
 
 """
 1. Transfer data.
@@ -21,13 +25,18 @@ class Processor:
     """
     def process(self, options: dict) -> Message:
         monitor_name = options.get("monitor", "pmacct")
+        if monitor_name not in self.monitor_manager.support:
+            return None
         monitor = self.monitor_manager.monitors.get(monitor_name, None)
-        if monitor_name == "pmacct":
-            data_filter = get_default_filter()
-            monitor.preprocess(options, data_filter=data_filter)
-            msg = Message(monitor.data[0])
-            return msg
-        return None
+
+        data_filter = get_default_filter()[monitor_name]
+        monitor.preprocess(options, data_filter=data_filter)
+        if not monitor.data:
+            return None
+        msg = Message([monitor.data[0], monitor.data[1], monitor.data[2]])
+
+        return msg
+
 
     def analyze(self, options: dict, msg: Message) -> dict:
         # fake implementation
@@ -73,16 +82,19 @@ class monilyzerHandler(BaseHTTPRequestHandler):
         except ValueError:
             self.send_error_response(400, "Invalid query parameters. Hours must be a valid integer")
             return
-        
-        # Send response status code and headers
-        self.send_response(200)
-        self.send_header('Content-type','application/json')
-        self.end_headers()
 
         # Process and analyze
         processor = self.server.injected_processor
         msg = processor.process(options)
+        if msg is None:
+            self.send_error_response(400, "Not a support monitor or failed to process")
+            return
         resp = processor.analyze(options, msg)
+
+        # Send response status code and headers
+        self.send_response(200)
+        self.send_header('Content-type','application/json')
+        self.end_headers()
         self.wfile.write(bytes(json.dumps(resp), "utf8"))
 
         return
