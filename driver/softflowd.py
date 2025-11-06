@@ -25,7 +25,7 @@ class DriverSoftflowd:
             pass
 
         return data
-    
+
     def get_files(self, start_date, start_time, end_date, end_time):
         prefix = "nfcapd"
         files = []
@@ -45,7 +45,7 @@ class DriverSoftflowd:
                     files.append(os.path.join(self._data_dir, file))
         files.sort()
         return files
-    
+
     def get_range_from_now(self, hours=1):
         end = datetime.now()
         start = end - timedelta(hours=hours)
@@ -56,7 +56,7 @@ class DriverSoftflowd:
         end_time = end.strftime("%H%M")
 
         return [start_date, start_time, end_date, end_time]
-    
+
 
 if __name__ == "__main__":
     driver = DriverSoftflowd(data_dir="./monitor/softflowd/data")

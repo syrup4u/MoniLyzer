@@ -30,7 +30,7 @@ class DriverPmacct:
                 except json.JSONDecodeError:
                     continue
         return data
-    
+
     def get_files(self, start_date, start_time, end_date, end_time):
         prefix = "traffic_"
         files = []
