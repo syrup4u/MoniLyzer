@@ -1,3 +1,5 @@
+# type: ignore
+
 # from transport.message import Message
 from api.monitor import MonitorManager, get_default_filter
 from api.analyzer import AnalyzerManager
@@ -38,15 +40,17 @@ class Processor:
         return msg
 
 
-    def analyze(self, options: dict, msg: Message) -> dict:
-        # fake implementation
-        self.analyzer_manager.analyze(msg)
-        if msg is not None:
-            return {"data": msg.payload}
+    def analyze(self, options: dict, msg: Message) -> dict | None:
+        analyzer_name = options.get("analyzer", "snort")
+        if analyzer_name not in self.analyzer_manager.support:
+            return None
+
+        result = self.analyzer_manager.analyze(analyzer_name, msg)
+        return result
 
     def run(self):
         print('Starting MoniLyzer server...')
-        server = HTTPServer((self.config["host"], int(self.config["port"])), monilyzerHandler)
+        server = HTTPServer((self.config["host"], int(self.config["port"])), MonilyzerHandler)
         server.injected_processor = self
         try:
             server.serve_forever()
@@ -54,26 +58,26 @@ class Processor:
             print('Stopping MoniLyzer server...')
             server.server_close()
 
-class monilyzerHandler(BaseHTTPRequestHandler):
+class MonilyzerHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         # Parse URL path and query string
         parsed_url = urlparse(self.path)
         query_params = parse_qs(parsed_url.query)
-        
+
         # Only accept /opt path
         if parsed_url.path != '/opt':
             self.send_error_response(400, "Invalid path. Expected: /opt")
             return
-        
+
         # Extract options from query string (e.g., /opt?monitor=pmacct&hours=16800)
         if not query_params:
             self.send_error_response(400, "No query parameters provided. Expected: /opt?monitor=value&hours=value")
             return
-        
+
         if "monitor" not in query_params or "hours" not in query_params:
             self.send_error_response(400, "Missing required parameters: monitor and hours")
             return
-        
+
         try:
             options = {
                 "monitor": query_params["monitor"][0],
@@ -98,7 +102,7 @@ class monilyzerHandler(BaseHTTPRequestHandler):
         self.wfile.write(bytes(json.dumps(resp), "utf8"))
 
         return
-    
+
     def send_error_response(self, code, message):
         """Send an error response with JSON body"""
         self.send_response(code)

@@ -1,4 +1,4 @@
-# from transport.message import Message
+from analyzer import SnortAnalyzer, LLMAnalyzer, SimpleJournalAnalyzer
 
 class AnalyzerManager:
     def __init__(self):
@@ -9,5 +9,9 @@ class AnalyzerManager:
         self.analyzers[name] = analyzer
         self.support.append(name)
 
-    def analyze(self, data):
-        pass
+    def analyze(self, name, message):
+        if name not in self.analyzers:
+            raise KeyError(f"Analyzer '{name}' not registered")
+        analyzer = self.analyzers[name]
+        # Delegate to analyzer implementation's analyze method
+        return analyzer.analyze(message)

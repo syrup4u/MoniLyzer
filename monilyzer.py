@@ -1,5 +1,5 @@
-from api.monitor import *
-from api.analyzer import AnalyzerManager
+from api.monitor import MonitorManager, MonitorPmacct, MonitorJournalctl, MonitorSoftflowd
+from api.analyzer import AnalyzerManager, SnortAnalyzer, LLMAnalyzer, SimpleJournalAnalyzer
 from processor import Processor
 
 import configparser
@@ -42,7 +42,12 @@ if __name__ == "__main__":
     monitor_journalctl = MonitorJournalctl(journalctl_config)
     monitor_manager.register_monitor("journalctl", monitor_journalctl)
 
-    # TODO: initializes analyzers
+    analyzer_snort = SnortAnalyzer()
+    analyzer_llm = LLMAnalyzer()
+    analyzer_simple_journal = SimpleJournalAnalyzer()
+    analyzer_manager.register_analyzer("snort", analyzer_snort)
+    analyzer_manager.register_analyzer("llm", analyzer_llm)
+    analyzer_manager.register_analyzer("simple_journal", analyzer_simple_journal)
 
     # run processor
     processor.run()
