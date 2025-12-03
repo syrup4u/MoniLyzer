@@ -17,6 +17,8 @@ In each directory, you can find the followings: (except for `journalctl` because
 
 You only need to start the monitor service you want to include.
 
+**Make sure you have run `sudo apt update`**
+
 ### Pmacct
 
 1. `bash requirements.sh`

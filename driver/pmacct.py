@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 class DriverPmacct:
     def __init__(self, *, data_dir: str):
@@ -52,7 +52,7 @@ class DriverPmacct:
         return files
 
     def get_range_from_now(self, hours=1):
-        end = datetime.now()
+        end = datetime.now(timezone.utc)
         start = end - timedelta(hours=hours)
 
         start_date = start.strftime("%Y%m%d")

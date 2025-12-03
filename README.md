@@ -25,19 +25,17 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Configuration: `monilyzer.ini`
+Configuration: `monilyzer.ini`, modify the `ip` under `[nic]`, set it to your local ip (later the MoniLyzer will filter out the outbound packets).
 
-Run the MoniLyzer:
-
-```sh
-python monilyzer.py
-```
+Run the MoniLyzer: `sudo python monilyzer.py` or `bash run.sh`.
 
 ## How to use
 
 Example: Recent 1 hour traffic
 
 `curl "<host>:<port>/opt?monitor=pmacct&hours=1"`
+
+Or the script `test.sh`.
 
 ## Todo
 

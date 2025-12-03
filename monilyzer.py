@@ -31,6 +31,7 @@ if __name__ == "__main__":
 
     softflowd_config = {
         "data_dir": config["softflowd"]["data_dir"],
+        "ip": config["nic"]["ip"],
     }
     monitor_softflowd = MonitorSoftflowd(softflowd_config)
     monitor_manager.register_monitor("softflowd", monitor_softflowd)

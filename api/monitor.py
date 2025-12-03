@@ -20,8 +20,6 @@ class MonitorManager:
         self.monitors[name] = monitor
         self.support.append(name)
 
-    # TODO: unify the field names across different monitors
-
 
 class MonitorPmacct:
     def __init__(self, config):
@@ -139,9 +137,9 @@ def get_default_filter():
 
 
 if __name__ == "__main__":
-    config = {"data_dir": "monitor/pmacct/data", "ip": "10.10.1.1"}
+    config = {"data_dir": "monitor/pmacct/data", "ip": "10.10.1.2"}
     monitor = MonitorPmacct(config)
-    options = {"hours": 16800}
+    options = {"hours": 1}
     monitor.preprocess(options, data_filter=get_default_filter()['pmacct'])
     print(len(monitor.data))
     print(monitor.data[:2])
