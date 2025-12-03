@@ -1,5 +1,3 @@
-from analyzer import SnortAnalyzer, LLMAnalyzer, SimpleJournalAnalyzer
-
 class AnalyzerManager:
     def __init__(self):
         self.analyzers = {}

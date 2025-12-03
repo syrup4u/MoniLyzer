@@ -1,5 +1,6 @@
 from api.monitor import MonitorManager, MonitorPmacct, MonitorJournalctl, MonitorSoftflowd
-from api.analyzer import AnalyzerManager, SnortAnalyzer, LLMAnalyzer, SimpleJournalAnalyzer
+from api.analyzer import AnalyzerManager
+from analyzer import SnortAnalyzer, LLMAnalyzer, SimpleJournalAnalyzer
 from processor import Processor
 
 import configparser

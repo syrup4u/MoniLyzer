@@ -1,3 +1,7 @@
 #!/bin/sh
 
-sudo python monilyzer.py
+PYTHON=${PYTHON:-python}
+
+echo "Use Python executable $(which $PYTHON)"
+
+sudo "$PYTHON" monilyzer.py
