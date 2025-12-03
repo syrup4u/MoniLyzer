@@ -9,7 +9,7 @@ class DriverJournalctl:
         if hours == 1:
             time_setting = f"{hours} hour ago"
         else:
-             time_setting = f"{hours} hours ago"
+            time_setting = f"{hours} hours ago"
         cmd = ["sudo", "journalctl", "--since", time_setting, "-o", "json"]
 
         for s in self.listen_services:
