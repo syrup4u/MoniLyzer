@@ -71,17 +71,18 @@ class MonilyzerHandler(BaseHTTPRequestHandler):
 
         # Extract options from query string (e.g., /opt?monitor=pmacct&hours=16800)
         if not query_params:
-            self.send_error_response(400, "No query parameters provided. Expected: /opt?monitor=value&hours=value")
+            self.send_error_response(400, "No query parameters provided. Expected: /opt?monitor=value&hours=value&analyzer=value")
             return
 
-        if "monitor" not in query_params or "hours" not in query_params:
+        if "monitor" not in query_params or "hours" not in query_params or "analyzer" not in query_params:
             self.send_error_response(400, "Missing required parameters: monitor and hours")
             return
 
         try:
             options = {
                 "monitor": query_params["monitor"][0],
-                "hours": int(query_params["hours"][0])
+                "hours": int(query_params["hours"][0]),
+                "analyzer": query_params["analyzer"][0],
             }
         except ValueError:
             self.send_error_response(400, "Invalid query parameters. Hours must be a valid integer")
