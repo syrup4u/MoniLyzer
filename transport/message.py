@@ -73,8 +73,8 @@ class LinkLayerType(Enum):
 class NetworkPacketMessage(Message):
     """Carries one or more captured packets for downstream inspection."""
 
-    def __init__(self, packets: Sequence[scapy.Packet]):
-        self._packets = packets
+    def __init__(self, packet: dict):
+        self._packet = packet
 
     @property
     @override
@@ -85,50 +85,27 @@ class NetworkPacketMessage(Message):
     @override
     def json_obj(self) -> dict:
         return {
-            "packets": [
-                {
-                    "pickled_data": pickle.dumps(packet).hex()
-                }
-                for packet in self._packets
-            ]
+            "packet": self._packet
         }
 
     @classmethod
     @override
     def load(cls, json_obj: dict) -> "NetworkPacketMessage":
-        packets = [
-            pickle.loads(bytes.fromhex(packet_dict["pickled_data"]))
-            for packet_dict in json_obj["packets"]
-        ]
-        return cls(packets)
+        packet = json_obj["packet"]
+        return cls(packet)
 
     @override
     def supported_analyzers(self) -> set[Analyzer]:
-        return {Analyzer.Snort, Analyzer.LLM}
+        return {Analyzer.LLM}
 
     def _to_format_of_analyzer(self, analyzer: Analyzer) -> bytes:
         match analyzer:
-            case Analyzer.Snort:
-                return self._to_snort_format()
             case Analyzer.LLM:
                 return self._to_llm_format()
         raise ValueError(f"Unsupported analyzer {analyzer} for NetworkPacketMessage")
 
-    def _to_snort_format(self) -> bytes:
-        with tempfile.NamedTemporaryFile() as temp_pcap:
-            scapy.wrpcap(temp_pcap.name, self._packets)
-            temp_pcap.seek(0)
-            pcap_data = temp_pcap.read()
-        return pcap_data
-
     def _to_llm_format(self) -> bytes:
-        packets_prompts = []
-        for packet in self._packets:
-            packet_summary = packet.summary()
-            packet_hexdump = scapy.hexdump(packet, dump=True)
-            prompt = f"Packet Summary:\n{packet_summary}\n\nHexdump:\n{packet_hexdump}\n"
-            packets_prompts.append(prompt)
-        full_prompt = "Analyze the following network packets we captured:\n\n" + "\n---\n".join(packets_prompts)
+        full_prompt = f"Analyze the following network packet we captured:\n\n{self._packet} and decide if it indicates a likely attack."
         return full_prompt.encode('utf-8')
 
 class JournalMessage(Message):
