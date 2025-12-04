@@ -5,6 +5,7 @@ Monitor module
 from driver.pmacct import DriverPmacct
 from driver.softflowd import DriverSoftflowd
 from driver.journalctl import DriverJournalctl
+from transport.message import JournalMessage
 
 """
 - It is possible to implement concurrency by adding lock mechanism.
@@ -60,6 +61,9 @@ class MonitorPmacct:
                 continue
             self.data.append(record)
 
+    def to_message(self):
+        pass
+
 
 class MonitorSoftflowd:
     def __init__(self, config):
@@ -96,6 +100,9 @@ class MonitorSoftflowd:
                 continue
             self.data.append(record)
 
+    def to_message(self):
+        pass
+
 
 class MonitorJournalctl:
     def __init__(self, config):
@@ -119,6 +126,9 @@ class MonitorJournalctl:
             for field in data_filter:
                 f_items[field] = record[field]
             self.data.append(f_items)
+
+    def to_message(self):
+        return JournalMessage(self.data)
 
 def get_default_filter():
     return {

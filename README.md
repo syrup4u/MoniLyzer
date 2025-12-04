@@ -6,7 +6,7 @@ MoniLyzer: A Middleware Between Monitors and Attack Analyzer
 
 - Linux (Ubuntu is preferred, others would need to modify some `requirements.sh` scripts in monitors)
 - Root Privilege (for monitors)
-- Python 3.8+
+- Python 3.12+
 
 ## Before running the MoniLyzer
 
@@ -35,7 +35,7 @@ Example: Recent 1 hour traffic
 
 `curl "<host>:<port>/opt?monitor=pmacct&hours=1"`
 
-Or the script `test.sh`.
+Or the script `bash test.sh`.
 
 ## Todo
 

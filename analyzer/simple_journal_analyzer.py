@@ -22,7 +22,7 @@ class SimpleJournalAnalyzer(AnalyzerManager):
         json_obj = json.loads(raw_bytes.decode("utf-8", errors="replace"))
         attack_entries = []
         pattern = re.compile(r"invalid user ([a-zA-Z0-9_]+) from ((\d+\.){3}(\d+))")
-        for e in json_obj["data"]:
+        for e in json_obj:
             msg: str = e["MESSAGE"]
             match_ = pattern.search(msg.lower())
             if match_:

@@ -1,16 +1,12 @@
 # type: ignore
 
-# from transport.message import Message
+from transport.message import Message
 from api.monitor import MonitorManager, get_default_filter
 from api.analyzer import AnalyzerManager
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 import json
-
-class Message:
-    def __init__(self, data):
-        self.payload = data
 
 """
 1. Transfer data.
@@ -35,10 +31,7 @@ class Processor:
         monitor.preprocess(options, data_filter=data_filter)
         if not monitor.data:
             return None
-        msg = Message([monitor.data[0], monitor.data[1], monitor.data[2]])
-
-        return msg
-
+        return monitor.to_message()
 
     def analyze(self, options: dict, msg: Message) -> dict | None:
         analyzer_name = options.get("analyzer", "snort")
