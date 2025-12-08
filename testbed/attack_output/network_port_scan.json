@@ -1,0 +1,8 @@
+{
+  "analyzer": "LLM",
+  "is_attack": true,
+  "reasoning": "The capture shows a high volume of packets from a limited number of unique source IPs, particularly 128.146.189.80 and 128.105.145.146, which have an unusually high number of total packets (132950 and 145335 respectively) compared to others. This suggests potential scanning or flooding behavior, indicative of a likely attack.",
+  "raw_output": "{\"is_attack\":true,\"reasoning\":\"The capture shows a high volume of packets from a limited number of unique source IPs, particularly 128.146.189.80 and 128.105.145.146, which have an unusually high number of total packets (132950 and 145335 respectively) compared to others. This suggests potential scanning or flooding behavior, indicative of a likely attack.\"}",
+  "model": "gpt-4o-mini"
+}
+

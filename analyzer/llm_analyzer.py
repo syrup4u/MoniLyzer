@@ -60,6 +60,7 @@ class LLMAnalyzer(AnalyzerManager):
             from openai import OpenAI  # type: ignore
 
             client = OpenAI(api_key=api_key)
+            print(f"[1] length of prompt sent to LLM: {len(prompt)}")
             response = client.chat.completions.create(
                 model=self._model,
                 messages=[
@@ -68,6 +69,7 @@ class LLMAnalyzer(AnalyzerManager):
                 ],
                 temperature=0,
             )
+            print(f"[2] length of prompt sent to LLM: {len(prompt)}")
             content = response.choices[0].message.content or "{}"
         except Exception:
             # Try legacy SDK for broader compatibility
@@ -75,6 +77,7 @@ class LLMAnalyzer(AnalyzerManager):
                 import openai  # type: ignore
 
                 openai.api_key = api_key
+                print(f"[3] length of prompt sent to LLM: {len(prompt)}")
                 completion = openai.ChatCompletion.create(
                     model=self._model,
                     messages=[
@@ -83,6 +86,7 @@ class LLMAnalyzer(AnalyzerManager):
                     ],
                     temperature=0,
                 )
+                print(f"[4] length of prompt sent to LLM: {len(prompt)}")
                 content = completion["choices"][0]["message"]["content"] or "{}"
             except Exception as e2:  # pragma: no cover - network/env dependent
                 raise RuntimeError(

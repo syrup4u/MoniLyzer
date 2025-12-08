@@ -36,11 +36,3 @@ Example: Recent 1 hour traffic
 `curl "<host>:<port>/opt?monitor=pmacct&hours=1"`
 
 Or the script `bash test.sh`.
-
-## Todo
-
-1. Monitor Deployment
-2. Analyzer Deployment
-3. Basic API and main process in Processor
-4. attack tests
-5. Configuration (auto generation)

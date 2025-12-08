@@ -5,7 +5,7 @@ Monitor module
 from driver.pmacct import DriverPmacct
 from driver.softflowd import DriverSoftflowd
 from driver.journalctl import DriverJournalctl
-from transport.message import JournalMessage
+from transport.message import JournalMessage, NetworkPacketMessage
 
 """
 - It is possible to implement concurrency by adding lock mechanism.
@@ -54,15 +54,29 @@ class MonitorPmacct:
         # filter
         tcp_only = "tcp_only" in data_filter
         traffic_in_only = "traffic_in_only" in data_filter
+        aggregation = {}
         for record in all_data:
             if tcp_only and record.get("ip_proto") != "tcp":
                 continue
             if traffic_in_only and record.get("ip_src") == self.ip:
                 continue
-            self.data.append(record)
+            aggregation_key = record.get("ip_src", None)
+            if aggregation_key:
+                if aggregation_key not in aggregation:
+                    aggregation[aggregation_key] = [0, []] # packets, ports
+                aggregation[aggregation_key][0] += record.get("packets", 0)
+                aggregation[aggregation_key][1].append(record.get("port_dst"))
+        
+        for ip_src, (packets, ports) in aggregation.items():
+            self.data.append({
+                "ip_src": ip_src,
+                "total_packets": packets,
+                # "number_of_unique_access_ports (from 1-65536)": len(set(ports))
+                "dst_ports": list(set(ports))
+            })
 
-    def to_message(self):
-        pass
+    def to_message(self, options: dict):
+        return NetworkPacketMessage({"packets_summary": self.data, "collected in hours": options.get("hours", 1)})
 
 
 class MonitorSoftflowd:
@@ -95,13 +109,26 @@ class MonitorSoftflowd:
         
         # filter
         traffic_in_only = "traffic_in_only" in data_filter
+        aggregation = {}
         for record in all_data:
             if traffic_in_only and record.get("src4_addr") == self.ip:
                 continue
-            self.data.append(record)
+            aggregation_key = record.get("src4_addr", None)
+            if aggregation_key:
+                if aggregation_key not in aggregation:
+                    aggregation[aggregation_key] = [0, []] # packets, ports
+                aggregation[aggregation_key][0] += record.get("in_packets", 0)
+                aggregation[aggregation_key][1].append(record.get("dst_port"))
+        
+        for ip_src, (packets, ports) in aggregation.items():
+            self.data.append({
+                "ip_src": ip_src,
+                "total_packets": packets,
+                "dst_ports": list(set(ports))
+            })
 
-    def to_message(self):
-        pass
+    def to_message(self, options: dict):
+        return NetworkPacketMessage({"packets_summary": self.data, "collected in hours": options.get("hours", 1)})
 
 
 class MonitorJournalctl:
@@ -127,7 +154,7 @@ class MonitorJournalctl:
                 f_items[field] = record[field]
             self.data.append(f_items)
 
-    def to_message(self):
+    def to_message(self, options: dict):
         return JournalMessage(self.data)
 
 def get_default_filter():
@@ -152,4 +179,4 @@ if __name__ == "__main__":
     options = {"hours": 1}
     monitor.preprocess(options, data_filter=get_default_filter()['pmacct'])
     print(len(monitor.data))
-    print(monitor.data[:2])
+    print(monitor.to_message(options).json_obj)

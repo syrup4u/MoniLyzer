@@ -1,0 +1,7 @@
+{
+  "analyzer": "LLM",
+  "is_attack": true,
+  "reasoning": "The logs show a high volume of failed authentication attempts from various IP addresses, including multiple invalid user attempts and connection resets by the root user. This pattern is indicative of a brute-force attack or unauthorized access attempts, suggesting malicious activity aimed at compromising the system.",
+  "raw_output": "{\n  \"is_attack\": true,\n  \"reasoning\": \"The logs show a high volume of failed authentication attempts from various IP addresses, including multiple invalid user attempts and connection resets by the root user. This pattern is indicative of a brute-force attack or unauthorized access attempts, suggesting malicious activity aimed at compromising the system.\"\n}",
+  "model": "gpt-4o-mini"
+}

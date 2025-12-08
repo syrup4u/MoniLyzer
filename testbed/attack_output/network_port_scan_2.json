@@ -1,0 +1,8 @@
+{
+  "analyzer": "LLM",
+  "is_attack": true,
+  "reasoning": "The packet capture shows an unusually high number of packets (65543) from a single source IP (10.10.1.1) within a short time frame (1 hour), which is indicative of a potential DoS attack or scanning activity, especially given the low number of unique ports.",
+  "raw_output": "{\"is_attack\":true,\"reasoning\":\"The packet capture shows an unusually high number of packets (65543) from a single source IP (10.10.1.1) within a short time frame (1 hour), which is indicative of a potential DoS attack or scanning activity, especially given the low number of unique ports.\"}",
+  "model": "gpt-4o-mini"
+}
+

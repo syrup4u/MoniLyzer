@@ -1,0 +1,7 @@
+{
+  "analyzer": "LLM",
+  "is_attack": true,
+  "reasoning": "The packet capture shows a high volume of TCP connections from a single source IP (75.118.14.110) to a destination IP (128.105.145.146) on port 22 (SSH), with multiple packets being sent in quick succession. This pattern is indicative of a potential brute-force attack or scanning activity targeting the SSH service, as it suggests an attempt to gain unauthorized access.",
+  "raw_output": "{\"is_attack\":true,\"reasoning\":\"The packet capture shows a high volume of TCP connections from a single source IP (75.118.14.110) to a destination IP (128.105.145.146) on port 22 (SSH), with multiple packets being sent in quick succession. This pattern is indicative of a potential brute-force attack or scanning activity targeting the SSH service, as it suggests an attempt to gain unauthorized access.\"}",
+  "model": "gpt-4o-mini"
+}

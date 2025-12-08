@@ -1,12 +1,12 @@
 #!/bin/bash
 
-pid_pmacct_core=733460
-pid_pmacct_output=733461
+pid_pmacct_core=799547
+pid_pmacct_output=799548
 
-pid_softflowd=731541
-pid_nfcapd=731546
+pid_softflowd=799642
+pid_nfcapd=799647
 
-pid_MoniLyzer=735598
+pid_MoniLyzer=816161
 
 # echo "Monitoring pmacct process $pid_pmacct_core ..."
 # bash ./monitor_precise.sh $pid_pmacct_core &
@@ -19,8 +19,8 @@ pid_MoniLyzer=735598
 # echo "Monitoring nfcapd process $pid_MoniLyzer ..."
 # bash ./monitor_precise.sh $pid_MoniLyzer &
 
-python plot_precise.py "resource_usage_precise_$pid_pmacct_core.csv"
-python plot_precise.py "resource_usage_precise_$pid_pmacct_output.csv"
-python plot_precise.py "resource_usage_precise_$pid_softflowd.csv"
-python plot_precise.py "resource_usage_precise_$pid_nfcapd.csv"
+# python plot_precise.py "resource_usage_precise_$pid_pmacct_core.csv"
+# python plot_precise.py "resource_usage_precise_$pid_pmacct_output.csv"
+# python plot_precise.py "resource_usage_precise_$pid_softflowd.csv"
+# python plot_precise.py "resource_usage_precise_$pid_nfcapd.csv"
 # python plot_precise.py "resource_usage_precise_$pid_MoniLyzer.csv"

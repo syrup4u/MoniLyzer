@@ -19,6 +19,8 @@ class DriverSoftflowd:
             for record in records:
                 # filters out some fields
                 keep_fields = ["t_first", "src4_addr", "dst4_addr", "src_port", "dst_port", "in_packets", "in_bytes"]
+                if "src4_addr" not in record:
+                    continue
                 new_record = {k: v for k, v in record.items() if k in keep_fields}
                 data.append(new_record)
         except json.JSONDecodeError:
@@ -67,3 +69,4 @@ if __name__ == "__main__":
         records = driver.read_data_from_file(fp)
         cnt += len(records)
     print(f"Total records found: {cnt}")
+    # print(records[:5])  # print first 5 records

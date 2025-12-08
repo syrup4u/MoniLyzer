@@ -105,7 +105,7 @@ class NetworkPacketMessage(Message):
         raise ValueError(f"Unsupported analyzer {analyzer} for NetworkPacketMessage")
 
     def _to_llm_format(self) -> bytes:
-        full_prompt = f"Analyze the following network packet we captured:\n\n{self._packet} and decide if it indicates a likely attack."
+        full_prompt = f"Analyze the following network packets we captured:\n\n{self._packet} and decide if it indicates a likely attack."
         return full_prompt.encode('utf-8')
 
 class JournalMessage(Message):

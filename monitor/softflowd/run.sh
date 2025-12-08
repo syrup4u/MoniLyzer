@@ -1,6 +1,6 @@
 #!/bin/sh
 
-NIC_NAME="enp6s0f1"
+NIC_NAME="enp1s0f0"
 EXPORT_PORT="2055"
 EXPORT="127.0.0.1:$EXPORT_PORT"
 DATA_DIR=$(pwd)/data

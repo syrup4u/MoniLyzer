@@ -31,7 +31,7 @@ class Processor:
         monitor.preprocess(options, data_filter=data_filter)
         if not monitor.data:
             return None
-        return monitor.to_message()
+        return monitor.to_message(options)
 
     def analyze(self, options: dict, msg: Message) -> dict | None:
         analyzer_name = options.get("analyzer", "snort")
